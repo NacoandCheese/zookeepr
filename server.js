@@ -47,6 +47,11 @@ function filterByQuery(query, animalsArray) {
     }
     return filteredResults;
 }
+// Function that takes in the ID and array of animals and returns a single animal object
+function findById(id, animalsArray) {
+    const result = animalsArray.filter(animal => animal.id === id)[0];
+    return result;
+};
 //Route that the front-end can get the data from. Use res.json to send json. Use res.send to send small messages.
 app.get('/api/animals', (req, res) => {
     //accessing the query property on the req object
@@ -55,6 +60,15 @@ app.get('/api/animals', (req, res) => {
         results = filterByQuery(req.query, results);
     }
     res.json(results);
+});
+//New GET route for animals. If no record exists for the animal being searched for the client recieves a 404 error.
+app.get('/api/animals/:id', (req, res) => {
+    const result = findById(req.params.id, animals);
+    if (result) {
+        res.json(result);
+    } else {
+        res.send(404);
+    }
 });
 
 //Chaining method to make sure server listens.
