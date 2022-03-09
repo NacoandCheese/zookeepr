@@ -11,8 +11,13 @@ const app = express();
 const fs = require('fs');
 const path = require('path');
 
+
+//Middleware to create explicit routes to our HTML file and CSS files.
+app.use(express.static('public/zookeepr-public'));
+
 //parse incoming string or array data
 app.use(express.urlencoded({ extended: true}));
+
 //parse incoming JSON data. app.use() is a method executed by our Express.js server that mounts a function to the server that our requests will pass through before getting to the endpoint.
 //The functions we can mount to our server are referred to as middleware.
 app.use(express.json());
@@ -98,6 +103,8 @@ app.get('/api/animals', (req, res) => {
     }
     res.json(results);
 });
+
+
 //New GET route for animals. If no record exists for the animal being searched for the client recieves a 404 error.
 app.get('/api/animals/:id', (req, res) => {
     const result = findById(req.params.id, animals);
@@ -128,6 +135,22 @@ app.post('/api/animals', (req, res) => {
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, './public/zookeepr-public/index.html'));
 });
+
+//GET routes for other pages that brings us to the root route of the server. This routes animals.html
+app.get('/animals', (req, res) => {
+    res.sendFile(path.join(__dirname, './public/zookeepr-public/animals.html'));
+});
+
+//GET route for zoo keepers
+app.get('/zookeepers', (req, res) => {
+    res.sendFile(path.join(__dirname, './public/zookeepr-public/zookeepers.html'));
+});
+
+//Wildcard route to catch routes that do not exist.
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, './public/zookeepr-public/index.html'));
+});
+
 //Chaining method to make sure server listens.
 app.listen(PORT, () => {
     console.log(`API server now on port ${PORT}!`);
